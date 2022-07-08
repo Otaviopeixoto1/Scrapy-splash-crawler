@@ -1,0 +1,67 @@
+
+https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=a&categoriasRegulatorias=1,2,3,4,5,6,10,7,8
+
+
+
+#para rodar o splash:
+  sudo docker run -it -p 8050:8050 scrapinghub/splash --disable-private-mode --max-timeout 3600 --disable-lua-sandbox
+  sudo docker run -it -p 8050:8050 scrapinghub/splash --disable-private-mode --max-timeout 3600
+  
+---para compartilhar o conteúdo do diretório bulas1 com o container
+
+  sudo docker run -it -p 8050:8050 -v /home/otavio/Desktop/modelos/teste_scrapy/Scrapy_Crawler/dockerfolder:/home scrapinghub/splash --disable-private-mode --max-timeout 36000 --disable-lua-sandbox
+  
+--- os arquivos da pasta bulas1 ficarão no diretório /home dentro do container do docker
+  
+  
+
+Caso ocorra algum problema ao rodar o comando acima, testar:
+
+sudo docker container ls
+
+Se houver um id ativo, fazemos:
+
+sudo docker stop id
+
+
+Para rodar os crawlers:
+
+scrapy crawl miner
+
+
+
+
+
+
+
+"abrir o terminal" do container com permissão para instalar pacotes do python
+        
+      sudo docker exec -u 0 -it 9dc23ff3972e /bin/bash
+          
+mudar a senha do usuário root:
+    chpasswd
+    root:bttminer
+    splash:bttminer
+    
+    
+instalando o comando sudo
+   apt-get update -y
+   apt-get install sudo -y
+   
+splash é o usuário usado pelo script lua, por isso essa é a senha que deve ser alterada e ele deve ser colocado 
+na lista de usuarios:        
+    adduser splash sudo
+
+instalar o bs4:
+      pip install bs4
+
+instalar o selenium:
+      pip install selenium
+instalar unidecode:
+      !!!pip install multiprocessing
+instalar o firefox:
+      sudo apt install firefox
+      
+--salvar uma nova imagem com essas alterações
+
+--comandos são executados com: python3 em vez de python
