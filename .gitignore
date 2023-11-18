@@ -1,3 +1,5 @@
 test_results
-dockerfolder/downloads
+
 dockerfolder/splash
+
+**/dockerfolder/downloads
