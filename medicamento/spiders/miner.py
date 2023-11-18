@@ -6,53 +6,57 @@ import os
 from csv import DictReader
 
 class MySpider(scrapy.Spider):
-    name="miner"
+    name = "miner"
+    
     script1 = ""
     script2 = ""
     base_url = "https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto="
-    errorLogPath = "../../dockerfolder/errorlog.txt"
-    crawlerStatusPath = "../../crawlerstatus.csv"
-    
-    leafletsPath = "../../dockerfolder/bulas"
-    
-    letters=[]
-    currentletter=""
-    currentindex=0
-    downloaderrors=[]
-    currentdindex=0
-    meta={'COOKIES_DEBUG': True}
+
+    errorLogPath = "../dockerfolder/errorlog.txt"
+    crawlerStatusPath = "../crawlerstatus.csv"
+    leafletsPath = "../dockerfolder/leaflets"
+
+    letters = []
+    currentletter = ""
+    currentindex = 0
+    downloaderrors = []
+    currentdindex = 0
+    meta = {'COOKIES_DEBUG': True}
     
     def start_requests(self):
 
-
-
-        with open("../splash_scripts/splash_request.lua") as f1:
+        with open("splash_scripts/splash_request.lua") as f1:
             self.script1 = f1.read()
 
-        with open("../splash_scripts/splash_retry.lua") as f2:
+        with open("splash_scripts/splash_retry.lua") as f2:
             self.script2 = f2.read()
     
         
-        #looping over the letters of the alphabet:
+        #Getting all letters to loop through from a file
         letterfile = open(self.crawlerStatusPath,"r")
-        lines=letterfile.readlines()
+        lines = letterfile.readlines()
         letterfile.close()
+
         for l in lines:
             a=l.strip("\n").split(",")
             if a[1]=="0":
                 self.letters.append(a[0])
         print(self.letters)
         
-        
-        self.currentletter=self.letters[0]
-        url=self.base_url + self.currentletter
+        self.currentletter = self.letters[0]
+        url = self.base_url + self.currentletter
             
         # Cleaning errorLog:
         f = open(self.errorLogPath,"w", encoding='utf-8')
         f.close()
         
         # Creating dict with the already downloaded leaflets (to avoid them when restarting):
-        files = os.listdir(self.leafletsPath+"-"+ self.currentletter)
+        files = []
+        if os.path.exists(self.leafletsPath+"-"+ self.currentletter):
+            files = os.listdir(self.leafletsPath+"-"+ self.currentletter)
+        else:
+            os.mkdir(self.leafletsPath+"-"+ self.currentletter)  
+
         print("Number of already downloaded files = " + str(len(files)))
         expedientes = {} 
         
@@ -62,18 +66,30 @@ class MySpider(scrapy.Spider):
             expedientes[(s[-1].replace(".pdf",""))+extension]=True 
         
         # Sending requests to splash:
-        yield SplashRequest(url=url, callback=self.parse1, endpoint='execute', args={'wait': 3, 'lua_source': self.script1,'timeout':36000, 'med_baixados':expedientes, 'attempts': 10, 'letter': self.currentletter})
+        yield SplashRequest(
+            url = url, 
+            callback = self.parse1, 
+            endpoint='execute', 
+            args={
+                'wait': 3, 
+                'lua_source': self.script1,
+                'timeout': 36000, 
+                'med_baixados':expedientes, 
+                'attempts': 10, 
+                'letter': self.currentletter
+            }
+        )
             
     
     
     # First attempt at downloading all files:
     def parse1(self, response):  
-        #Open errorLog to retry downloading missed files
+        # Open errorLog to retry downloading missed files
         errorlog=open(self.errorLogPath,"r", encoding='utf-8')
         erlines=errorlog.readlines()
         errorlog.close()
         
-        #Clean errorLog again
+        # Clean errorLog again
         f = open(self.errorLogPath,"w", encoding='utf-8')
         f.close()
 
@@ -140,7 +156,7 @@ class MySpider(scrapy.Spider):
         print("Download Errors:")
         print(self.downloaderrors)
 
-        #Detected Errors:
+        # Detected Errors:
         if len(self.downloaderrors)>0:
             for l in erlines:
                 a=l.strip("\n").split("_")
@@ -191,7 +207,7 @@ class MySpider(scrapy.Spider):
             tipo=self.downloaderrors[self.currentdindex][1]
             yield SplashRequest(url=self.base_url+self.downloaderrors[self.currentdindex][0], callback=self.parse2, endpoint='execute', args={'wait': 3, 'lua_source': self.script2,'timeout':36000,'tipobula': tipo,'expediente': self.downloaderrors[self.currentdindex][2] ,'attempts': 20, 'letter':  self.currentletter})
             
-        #No errors detected
+        # No errors detected
         else:
             print("No errors detected")   
 
@@ -226,7 +242,7 @@ class MySpider(scrapy.Spider):
             csvfile.close()
         
         
-            #Updating the satus of the leaflets:
+            # Updating the satus of the leaflets:
         
             letterfile = open(self.crawlerStatusPath,"r")
             lines=letterfile.readlines()
@@ -272,7 +288,19 @@ class MySpider(scrapy.Spider):
             
                 url=self.base_url + self.currentletter
                 
-                yield SplashRequest(url=url, callback=self.parse1, endpoint='execute', args={'wait': 3, 'lua_source': self.script1,'timeout':36000, 'med_baixados':expedientes, 'attempts': 10, 'letter': self.currentletter})
+                yield SplashRequest(
+                    url = url, 
+                    callback = self.parse1, 
+                    endpoint = 'execute', 
+                    args = {
+                        'wait': 3, 
+                        'lua_source': self.script1,
+                        'timeout':36000, 
+                        'med_baixados':expedientes, 
+                        'attempts': 10, 
+                        'letter': self.currentletter
+                    }
+                )
         
 
 

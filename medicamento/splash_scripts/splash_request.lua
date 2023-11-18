@@ -3,6 +3,10 @@ assert(splash:go(splash.args.url))
 splash:wait(splash.args.wait)
 os = require "os"
 
+--os.execute("echo bttminer | sudo -i")
+        
+
+
 local letter=splash.args.letter
 
 local med_baixados=splash.args.med_baixados
@@ -65,22 +69,21 @@ for i = 1, last_num do
 
     local medicamentos = splash:select_all("#containerTable > table > tbody > tr")
     
-    for i = 2, #medicamentos do
-    
-    	local nome_medicamento=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(i)..") > td:nth-child(1) > a"):text()
-    	local expediente=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(i)..") > td:nth-child(3)"):text()
+    for j = 2, #medicamentos do
+    	local nome_medicamento=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(j)..") > td:nth-child(2) > a"):text()
+    	local expediente=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(j)..") > td:nth-child(4)"):text()
     	
-    	local el_bula_paciente=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(i)..") > td:nth-child(5) > a")
+    	local el_bula_paciente=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(j)..") > td:nth-child(6) > a")
         local url_paciente=el_bula_paciente["attributes"]["href"]
         
-    	local el_bula_profissional=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(i)..") > td:nth-child(6) > a")
+    	local el_bula_profissional=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(j)..") > td:nth-child(7) > a")
     	local url_profissional=el_bula_profissional["attributes"]["href"]
     	
     	
     	
     	if isInMedBaixados(expediente .. "paciente") then goto continue1 end
     	
-  --Download das bulas do paciente:
+        --Download das bulas do paciente:
         
         os.execute("echo bttminer | sudo -S python3 /home/bula_script.py '".. url_paciente .. "' '" .. nome_medicamento .. "' '_paciente' ".. expediente .." '".. tostring(splash.args.attempts) .. "' '".. letter .. "'" )
         
@@ -89,7 +92,7 @@ for i = 1, last_num do
         
         if isInMedBaixados(expediente .. "profissional") then goto continue2 end
         
-  --Download das bulas do profissional:
+        --Download das bulas do profissional:
         
     	os.execute("echo bttminer | sudo -S python3 /home/bula_script.py '".. url_profissional .. "' '" .. nome_medicamento .. "' '_profissional' ".. expediente .." '".. tostring(splash.args.attempts) .. "' '".. letter .. "'")
     	

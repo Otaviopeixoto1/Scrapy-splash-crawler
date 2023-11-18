@@ -3,6 +3,8 @@ assert(splash:go(splash.args.url))
 splash:wait(splash.args.wait)
 os = require "os"
 
+--os.execute("echo bttminer | adduser splash sudo")
+
 local letter=splash.args.letter
 
 function scroll(num_scrolls,scroll_delay)
@@ -56,15 +58,15 @@ for i = 1, last_num do
     
     for i = 2, #medicamentos do
     
-        local nome_medicamento=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(i)..") > td:nth-child(1) > a"):text()
-    	local expediente=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(i)..") > td:nth-child(3)"):text()
+        local nome_medicamento=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(i)..") > td:nth-child(2) > a"):text()
+    	local expediente=splash:select("#containerTable > table > tbody > tr:nth-child("..tostring(i)..") > td:nth-child(4)"):text()
         
 
         if expediente ==  reqexpediente then
 
             --Download das bulas do paciente:
             if tipo == "paciente" then
-                local el_bula_paciente=splash:select("#containerTable > table > tbody > tr:nth-child(2) > td:nth-child(5) > a")
+                local el_bula_paciente=splash:select("#containerTable > table > tbody > tr:nth-child(2) > td:nth-child(6) > a")
                 local url_paciente=el_bula_paciente["attributes"]["href"]
     
                 os.execute("echo bttminer | sudo -S python3 /home/bula_script.py '".. url_paciente .. "' '" .. nome_medicamento .. "' '_paciente' ".. expediente .." '".. tostring(splash.args.attempts) .. "' '".. letter .. "'" )
@@ -75,7 +77,7 @@ for i = 1, last_num do
         
             --Download das bulas do profissional:
             if tipo == "profissional" then
-                local el_bula_profissional=splash:select("#containerTable > table > tbody > tr:nth-child(2) > td:nth-child(6) > a")
+                local el_bula_profissional=splash:select("#containerTable > table > tbody > tr:nth-child(2) > td:nth-child(7) > a")
                 local url_profissional=el_bula_profissional["attributes"]["href"]
     
                 os.execute("echo bttminer | sudo -S python3 /home/bula_script.py '".. url_profissional .. "' '" .. nome_medicamento .. "' '_profissional' ".. expediente .." '".. tostring(splash.args.attempts) .. "' '".. letter .. "'")

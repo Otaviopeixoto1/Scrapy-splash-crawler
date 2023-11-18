@@ -9,7 +9,10 @@ https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=a&categoriasRegulatoria
   
 ---para compartilhar o conteúdo do diretório bulas1 com o container
 
-  sudo docker run -it -p 8050:8050 -v /home/otavio/Desktop/modelos/teste_scrapy/Scrapy_Crawler/dockerfolder:/home scrapinghub/splash --disable-private-mode --max-timeout 36000 --disable-lua-sandbox
+my own version of splash
+  
+  sudo docker run -it -p 8050:8050 -v /home/otavio/python_projects/boitata/crawlers/scrapy-splash-crawler/dockerfolder:/home mysplash --disable-private-mode --max-timeout 36000 --disable-lua-sandbox
+
   
 --- os arquivos da pasta bulas1 ficarão no diretório /home dentro do container do docker
   
@@ -42,6 +45,7 @@ mudar a senha do usuário root:
     chpasswd
     root:bttminer
     splash:bttminer
+    'splash:splash':bttminer
     
     
 instalando o comando sudo
