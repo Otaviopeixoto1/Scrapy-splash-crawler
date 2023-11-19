@@ -5,7 +5,7 @@ from multiprocessing import Process
 import time
 import os
 
-print("INICIO")
+print("START")
 urlBula=sys.argv[1]
 nomeMedicamento=sys.argv[2]
 nomeMedicamento=nomeMedicamento.replace("/","")
@@ -33,11 +33,6 @@ options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/fo
 options.set_preference("pdfjs.disabled", True)
 
 
-
-#driver = webdriver.Firefox(options=options,executable_path='/home/geckodriver')
-#driver.set_page_load_timeout(3)
-
-
 count=0
 def DownloadFile():
     global count
@@ -52,11 +47,11 @@ def DownloadFile():
         errorlog=open("/home/errorlog.txt","a", encoding='utf-8')
         errorlog.write((nomeMedicamento).encode('utf-8', 'replace').decode()+extensaolog+"\n")
         errorlog.close()
-        print("ERRO: "+nomeMedicamento + extensao+" nao foi baixado")
+        print("ERROR: Unable to download the file: "+nomeMedicamento + extensao)
         return
     
     try:
-        print("baixando: "+nomeMedicamento+"-t"+str(count))
+        print("Downloading: "+nomeMedicamento+"-t"+str(count))
         count+=1
         driver.get(link)
         
@@ -74,7 +69,7 @@ def DownloadFile():
             filename=files[0]
         
             old_name = r"/home/downloads/"+ filename
-            new_name = r"/home/bulas"+"-"+letter+"/" + nomeMedicamento + extensao + ".pdf"
+            new_name = r"/home/leaflets"+"-"+letter+"/" + nomeMedicamento + extensao + ".pdf"
 
             os.rename(old_name, new_name)
             time.sleep(1)
@@ -94,22 +89,12 @@ def DownloadFile():
             time.sleep(1)
             filename=files[0]
             old_name = r"/home/downloads/"+ filename
-            new_name = r"/home/bulas"+"-"+letter+ "/" + nomeMedicamento + extensao + ".pdf"
+            new_name = r"/home/leaflets"+"-"+letter+ "/" + nomeMedicamento + extensao + ".pdf"
 
             os.rename(old_name, new_name)
     
             
             return
-
-
-
-
-#filename = '/home/linkbulas.txt'
-#with open(filename, 'a') as f:
-   #f.write(sys.argv[1])
-    #for u in table.findAll('a', attrs={'ng-if':"produto.idBulaPacienteProtegido"}):
-        #link_bula=u["href"]
-        #f.write(link_bula)
         
 p1 = Process(target=DownloadFile, name='donwload1')
 p1.start()
@@ -122,7 +107,7 @@ if p1.exitcode is None:
         time.sleep(1)
         filename=files[0]
         old_name = r"/home/downloads/"+ filename
-        new_name = r"/home/bulas"+"-"+letter+"/" + nomeMedicamento + extensao + ".pdf"
+        new_name = r"/home/leaflets"+"-"+letter+"/" + nomeMedicamento + extensao + ".pdf"
         os.rename(old_name, new_name)
     else:
         p2 = Process(target=DownloadFile, name='donwload2')
@@ -135,16 +120,15 @@ if p1.exitcode is None:
                 time.sleep(1)
                 filename=files[0]
                 old_name = r"/home/downloads/"+ filename
-                new_name = r"/home/bulas"+"-"+letter+"/" + nomeMedicamento + extensao + ".pdf"
+                new_name = r"/home/leaflets"+"-"+letter+"/" + nomeMedicamento + extensao + ".pdf"
                 os.rename(old_name, new_name)
             else:
                 errorlog=open("/home/errorlog.txt","a", encoding='utf-8')
                 errorlog.write((nomeMedicamento).encode('utf-8', 'replace').decode()+extensaolog+"\n")
                 errorlog.close()
-                print("ERRO: "+nomeMedicamento + extensao+" nao foi baixado")
-#DownloadFile()
-#driver.quit()
-print("FIM")
+                print("ERROR: Unable to download the file: "+nomeMedicamento + extensao)
+
+print("END")
 
     
 

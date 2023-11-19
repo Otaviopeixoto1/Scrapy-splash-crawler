@@ -3,3 +3,5 @@ test_results
 dockerfolder/splash
 
 **/dockerfolder/downloads
+
+dockerfolder/leaflets*

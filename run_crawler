@@ -12,7 +12,9 @@ https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto=a&categoriasRegulatoria
 my own version of splash
   
   sudo docker run -it -p 8050:8050 -v /home/otavio/python_projects/boitata/crawlers/scrapy-splash-crawler/dockerfolder:/home mysplash --disable-private-mode --max-timeout 36000 --disable-lua-sandbox
+  
 
+sudo docker run -it -p 8050:8050 -v "$(pwd)"/dockerfolder:/home mysplash --disable-private-mode --max-timeout 36000 --disable-lua-sandbox
   
 --- os arquivos da pasta bulas1 ficarão no diretório /home dentro do container do docker
   

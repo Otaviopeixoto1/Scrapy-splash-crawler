@@ -5,27 +5,37 @@ A web crawler made using the scrapy python library (https://scrapy.org/) togethe
 
 All the leaflets are queried and extracted by looping over all letters of the alphabet and inserting into the url: https://consultas.anvisa.gov.br/#/bulario/q/?nomeProduto={letter}&categoriasRegulatorias=1,2,3,4,5,6,10,7,8 
 
+This results in a query for all leaflets with names that start with {letter}
+
 
 # Run
 
-build the docker image from my docker file:
+- Splash was configured to run on a custom docker container. First, build the docker image from my docker file:
 
 ```
 sudo docker build -t mysplash - < Dockerfile
 ```
 
-splash was configured to run on a docker container using the command: 
+- On linux, on the root directory of the project, run this command to start the container:
 
 ```
-sudo docker run -it -p 8050:8050 -v /home/otavio/python_projects/boitata/crawlers/scrapy-splash-crawler/dockerfolder:/home mysplash --disable-private-mode --max-timeout 36000 --disable-lua-sandbox
+sudo docker run -it -p 8050:8050 -v "$(pwd)"/dockerfolder:/home mysplash --disable-private-mode --max-timeout 36000 --disable-lua-sandbox
 ```
 
-Then just run the crawler by using:
+- On windows its better to use the full path of the dockerfolder:
+
+```
+sudo docker run -it -p 8050:8050 -v /{PATH WHERE CLONED REPO IS CONTAINED}/scrapy-splash-crawler/dockerfolder:/home mysplash --disable-private-mode --max-timeout 36000 --disable-lua-sandbox
+```
+
+- Then, just run the crawler by using:
 
 ```
 cd medicamento
 scrapy crawl miner
 ```
+
+- The downloaded leaflets will be stored inside the dockerfolder in the path: dockerfolder/leaflet-{starting letter}
 
 
 # Pipeline
@@ -33,4 +43,4 @@ scrapy crawl miner
 
 
 # Status
-Currently, the code in this project is not functional due to changes that happend to the web site, however, many leaflet samples were acquired and the project was finished successfully
+Currently, the code in this project is functional, however, many leaflet samples were acquired and the project was finished.

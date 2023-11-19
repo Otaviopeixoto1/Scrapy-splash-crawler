@@ -2,11 +2,7 @@ function main(splash)
 assert(splash:go(splash.args.url))
 splash:wait(splash.args.wait)
 os = require "os"
-
---os.execute("echo bttminer | sudo -i")
         
-
-
 local letter=splash.args.letter
 
 local med_baixados=splash.args.med_baixados
